@@ -1,11 +1,11 @@
 # MOS
 an operating system I'm working on based on the "Write Your Own Operating System"
 series on [YouTube](https://www.youtube.com/watch?v=1rnA6wpF0o4&list=PLHh55M_Kq4OApWScZyPl5HhgsTJS9MZ6M).
-[here](https://github.com/AlgorithMan-de/wyoos) is the Y's repo.
+here is the [wyoos repo](https://github.com/AlgorithMan-de/wyoos).
 
 __this is not encredibly polished at all__
 
-its interesting playing around with really low level stuff on i386 and seeing the stuff
+It's interesting playing around with really low level stuff on i386 and seeing the stuff
 that's just really weird because of backwards compatibility. I kinda want to rewrite the
 interrupt thing in a way that might be cleaner, but for now I'm following the series to
 just try to get interrupts working. so far its getting interrupts for the hardware timer
@@ -18,7 +18,7 @@ I also got text to wrap and scroll automatically for what that's worth.
 - 32 bit compilation libs (for g++ -m32)
 - qemu (you can use some other vm thing but i used this one)
 - xorriso (there's a way to give qemu bzimages but i haven't bothered)
-  + __IMPORTANT__ if you don't have xorriso grub-mkrescue might silently fail :/
+  + __IMPORTANT__ if you don't have xorriso grub-mkrescue might silently fail :-/
     install xorriso to avoid confusion
 - grub-mkrescue
 

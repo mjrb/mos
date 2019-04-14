@@ -26,6 +26,9 @@ void newline() {
       }
     }
     linecount = HEIGHT -1;
+    for (int j = 0; j < WIDTH; j++) {
+      setposc(HEIGHT-1, j, ' ');
+    }
   }
 }
 

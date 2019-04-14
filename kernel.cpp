@@ -3,11 +3,13 @@
 #include "port.h"
 #include "print.h"
 #include "interrupts.h"
+#include "keyboard.h"
 
 extern "C" void kmain(void* multiboot_s, uint32_t magic) {
   GlobalDescriptorTable gdt;
   InterruptManager im(&gdt);
   // init hardware
+  KeyboardDriver kd(&im);
   
   im.activate();
   cls();
@@ -23,7 +25,7 @@ extern "C" void kmain(void* multiboot_s, uint32_t magic) {
   setposc(HEIGHT - 1, WIDTH - 1, 'c');
 
   //test scroll
-  for (int i = 0; i < 23; i++) {
+  for (int i = 0; i < 20; i++) {
     printf("here\n");
   }
 

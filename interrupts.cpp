@@ -1,5 +1,21 @@
 #include "interrupts.h"
 
+InterruptHandler::InterruptHandler(int num, InterruptManager* manager) :
+  num(num), manager(manager)
+{
+  manager->handlers[num] = this;
+}
+
+InterruptHandler::~InterruptHandler() {
+  if (manager->handlers[num] == this) {
+    manager->handlers[num] = 0;
+  }
+}
+
+uint32_t InterruptHandler::operator()(uint32_t esp) {
+  return esp;
+}
+
 InterruptManager::GateDescriptor InterruptManager::interruptDescriptorTable[256];
 InterruptManager* InterruptManager::current = 0;
 
@@ -10,10 +26,14 @@ uint32_t InterruptManager::handleInterrupt(uint8_t num, uint32_t esp) {
   return esp;
 }
 uint32_t InterruptManager::instHandleInterrupt(uint8_t num, uint32_t esp) {
-  printf("INTERRUPT ");
-  printh(num);
-  printf("! ");
 
+  if (handlers[num] != 0) {
+    esp = (*handlers[num])(esp);
+  } else if (num != 0x20) {
+    printf("UNHANDLED INTERRUPT ");
+    printh(num);
+    printf("! ");
+  }
 
   // if its a hardware interrupt 0x20-0x30, then acknowlage the pic
   if (0x20 <= num && num <= 0x30) {
@@ -52,6 +72,7 @@ InterruptManager::InterruptManager(GlobalDescriptorTable* gdt) :
   for (uint16_t i = 0; i < 256; i++) {
     setInterruptDescriptorTableEntry(i, code, 0, IDT_INTERRUPT_GATE,
 				     &ignoreInterrupt);
+    handlers[i] = 0;
   }
   setInterruptDescriptorTableEntry(0x20, code, 0, IDT_INTERRUPT_GATE,
 				   &handleInterruptRequest0x00);

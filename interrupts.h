@@ -6,8 +6,23 @@
 #include "gdt.h"
 #include "port.h"
 
-class InterruptManager {
+class InterruptManager;
+
+class InterruptHandler {
 protected:
+  uint8_t num;
+  InterruptManager* manager;
+  InterruptHandler(int num, InterruptManager* manager);
+  ~InterruptHandler();
+public:
+  virtual uint32_t operator()(uint32_t esp);
+};
+
+class InterruptManager {
+  friend class InterruptHandler;
+protected:
+  InterruptHandler* handlers[256];
+  
   static InterruptManager* current;
   
   struct GateDescriptor {

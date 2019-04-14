@@ -1,0 +1,2 @@
+add-symbol-file mykernel.bin 0x100000
+target remote | qemu-system-i386 -cdrom mykernel.iso -m 2048 -boot d -S -gdb stdio 

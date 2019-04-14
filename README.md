@@ -3,6 +3,8 @@ an operating system I'm working on based on the "Write Your Own Operating System
 series on [YouTube](https://www.youtube.com/watch?v=1rnA6wpF0o4&list=PLHh55M_Kq4OApWScZyPl5HhgsTJS9MZ6M).
 [here](https://github.com/AlgorithMan-de/wyoos) is the Y's repo.
 
+__this is not encredibly polished at all__
+
 its interesting playing around with really low level stuff on i386 and seeing the stuff
 that's just really weird because of backwards compatibility. I kinda want to rewrite the
 interrupt thing in a way that might be cleaner, but for now I'm following the series to

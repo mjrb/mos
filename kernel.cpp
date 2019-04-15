@@ -4,12 +4,30 @@
 #include "print.h"
 #include "interrupts.h"
 #include "keyboard.h"
+#include "syscall.h"
+
+// compares to strings until n
+bool strn_eq(char* str1, char* str2, uint32_t n) {
+    bool eq = true;
+    for (int i = 0; i < n; i++) {
+      if (str1[i] != str2[i]) {
+	eq = false;
+	break;
+      }
+    }
+    return eq;
+}
+
+
+extern "C" void program();
+extern "C" void dprogram();
 
 extern "C" void kmain(void* multiboot_s, uint32_t magic) {
   GlobalDescriptorTable gdt;
   InterruptManager im(&gdt);
   // init hardware
   KeyboardDriver kd(&im);
+  SyscallHandler sh(&im);
 
   im.activate();
   cls();
@@ -31,9 +49,18 @@ extern "C" void kmain(void* multiboot_s, uint32_t magic) {
 
   char buf[80];
   while (true) {
+    printf("type some text: ");
     get_line(buf, 80);
-    printf("recieved line: ");
-    printf(buf);
+    if (strn_eq(buf, "program\n", 9)) {
+      printf("running program\n");
+      program();
+    } else if (strn_eq(buf, "dprogram\n", 10)) {
+      printf("running program from data section\n");
+      dprogram();
+    } else {
+      printf("recieved line: ");
+      printf(buf);
+    }
   }
 
 

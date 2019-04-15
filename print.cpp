@@ -25,24 +25,28 @@ void newline() {
 	buffer[i * WIDTH + j] = buffer[(i + 1) * WIDTH + j];
       }
     }
-    linecount = HEIGHT -1;
+    linecount = HEIGHT - 1;
     for (int j = 0; j < WIDTH; j++) {
       setposc(HEIGHT-1, j, ' ');
     }
   }
 }
 
-extern "C" void printf(char* str) {
-  for(uint32_t i = 0; str[i] != '\0'; i++) {
-    if (str[i] == '\n') {
+extern "C" void putc(char c) {
+  if (c == '\n') {
       newline();
     } else {
-      setposc(linecount, colcount, str[i]);
+      setposc(linecount, colcount, c);
       colcount++;
       if (colcount >= WIDTH) {
 	newline();
       }
     }
+}
+
+extern "C" void printf(char* str) {
+  for(uint32_t i = 0; str[i] != '\0'; i++) {
+    putc(str[i]);
   }
 }
 
@@ -51,7 +55,7 @@ char nib2char(uint8_t nib) {
   if (0 <= nib && nib <= 9) {
     return nib + '0';
   } else {
-    return nib - 9 + 'A';
+    return nib - 10 + 'A';
   }
 }
 

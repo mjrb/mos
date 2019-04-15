@@ -35,13 +35,21 @@ void newline() {
 extern "C" void putc(char c) {
   if (c == '\n') {
       newline();
+  } else if (c == '\b') {
+    if (colcount == 0) {
+      colcount = WIDTH - 1;
+      linecount--;
     } else {
-      setposc(linecount, colcount, c);
-      colcount++;
-      if (colcount >= WIDTH) {
-	newline();
-      }
+      colcount--;
     }
+    setposc(linecount, colcount, ' ');
+  } else {
+    if (colcount >= WIDTH) {
+      newline();
+    }
+    setposc(linecount, colcount, c);
+    colcount++;
+  }
 }
 
 extern "C" void printf(char* str) {

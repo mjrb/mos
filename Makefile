@@ -7,7 +7,11 @@ AS=as
 LDARGS=-melf_i386
 LD=ld
 
-OBJECTS = gdt.o loader.o kernel.o port.o print.o interrupts.o interruptsstubs.o keyboard.o
+HANDLERS=keyboard.o syscall.o
+PROGRAMS=program.o
+DRIVERS=port.o print.o interrupts.o interruptsstubs.o
+
+OBJECTS = gdt.o loader.o kernel.o $(DRIVERS) $(HANDLERS) $(PROGRAMS)
 
 %.o: %.cpp
 	$(CXX) $(CXXARGS) -o $@ -c $<

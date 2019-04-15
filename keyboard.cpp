@@ -94,11 +94,15 @@ uint32_t KeyboardDriver::operator()(uint32_t esp) {
 
 extern "C" uint8_t getc() {
   while (KeyboardDriver::count == 0) {
-    asm volatile("hlt");
+    // start interrupts and wait for a char
+    asm volatile("sti\n"
+		 "hlt");
   }
+  asm volatile("cli");
   uint8_t result = KeyboardDriver::buffer[KeyboardDriver::head];
   KeyboardDriver::head++;
   KeyboardDriver::count--;
+  asm volatile("sti");
   return result;
 }
 
@@ -106,16 +110,31 @@ extern "C" uint8_t get_line(char* buf, uint32_t length) {
   uint8_t c = getc();
   int i = 0;
   while (c != '\n' && i < length - 1) {
-    buf[i] = c;
-    putc(c);
-    c = getc();
-    i++;
+    if (c == '\b') {
+      // only backspace until begining of buffer
+      if (i > 0) {
+	putc('\b');
+	i--;
+      }
+      c = getc();
+    } else {
+      putc(c);
+      buf[i] = c;
+      c = getc();
+      i++;
+    }
   }
+  // if the last char was \n insert it
+  // if not we line ran out of buffer
   if (c == '\n') {
     putc('\n');
     if (i < length - 1) {
       buf[i] = '\n';
+      i++;
     }
   }
-  buf[length - 1] = '\0';
+  // insert nul term
+  if (i < length) {
+    buf[i] = '\0';
+  }
 }

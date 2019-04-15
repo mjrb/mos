@@ -10,7 +10,7 @@ extern "C" void kmain(void* multiboot_s, uint32_t magic) {
   InterruptManager im(&gdt);
   // init hardware
   KeyboardDriver kd(&im);
-  
+
   im.activate();
   cls();
   printf("Welcome to my OS!\n");
@@ -18,7 +18,7 @@ extern "C" void kmain(void* multiboot_s, uint32_t magic) {
   printf(" part 2\n");
   printh((uint32_t)gdt.code_offset());
   printf("\n");
-  
+
   //trace bounds
   setposc(0, WIDTH - 1, 'a');
   setposc(HEIGHT - 1, 0, 'b');
@@ -29,6 +29,16 @@ extern "C" void kmain(void* multiboot_s, uint32_t magic) {
     printf("here\n");
   }
 
+  char buf[80];
+  while (true) {
+    get_line(buf, 80);
+    printf("recieved line: ");
+    printf(buf);
+  }
 
-  while(1);
+
+  while(true) {
+    // sleep until next interupt
+    asm volatile("hlt");
+  }
 }

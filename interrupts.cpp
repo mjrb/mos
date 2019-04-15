@@ -78,6 +78,8 @@ InterruptManager::InterruptManager(GlobalDescriptorTable* gdt) :
 				   &handleInterruptRequest0x00);
   setInterruptDescriptorTableEntry(0x21, code, 0, IDT_INTERRUPT_GATE,
 				   &handleInterruptRequest0x01);
+  setInterruptDescriptorTableEntry(0xCD, code, 0, IDT_INTERRUPT_GATE,
+				   &handleInterruptRequest0xCD);
 
   // begin sending interupts
   pic_master_command.write(0x11);

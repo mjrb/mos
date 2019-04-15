@@ -64,6 +64,7 @@ public:
   
   static void handleInterruptRequest0x00();
   static void handleInterruptRequest0x01();
+  static void handleInterruptRequest0xCD();
   static void handleException0x01();
 };
 

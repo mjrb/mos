@@ -1,4 +1,4 @@
-.set IRQ_BASE, 0x20 
+.set IRQ_BASE, 0x20
 .section .text
 .extern printf
 .extern _ZN16InterruptManager15handleInterruptEhj
@@ -20,36 +20,49 @@ _ZN16InterruptManager19handleException\num\()Ev:
 
 handleIntRequest 0x00
 handleIntRequest 0x01
+.global _ZN16InterruptManager26handleInterruptRequest0xCDEv
+_ZN16InterruptManager26handleInterruptRequest0xCDEv:
+	movb $0xCD , (intnum)
+	jmp int_bottom
 
-ditch:	
+ditch:
 	cli
 	pushl sherestr
 	call printf
 here:
 	jmp here
 
-	
+.extern SYS_EAX
+.extern SYS_EBX
+.extern SYS_ECX
 int_bottom:
+	movl %eax, (SYS_EAX)
+	movl %ebx, (SYS_EBX)
+	movl %ecx, (SYS_ECX)
 	pusha
 	pushl %ds
 	pushl %es
 	pushl %fs
 	pushl %gs
-	
+
 	push %esp
 	push (intnum)
 	call _ZN16InterruptManager15handleInterruptEhj
 	# addl $5, esp
 	movl %eax, %esp
 
-	
+
 	popl %gs
 	popl %fs
 	popl %es
-	popl %ds	
+	popl %ds
 	popa
+	movl (SYS_EAX), %eax
+	movl (SYS_EBX), %ebx
+	movl (SYS_ECX), %ecx
 
-	#add $4, %esp		
+
+	#add $4, %esp
 
 _ZN16InterruptManager15ignoreInterruptEv:
 	iret
@@ -59,5 +72,9 @@ forever:
 
 
 .data
+SYS_ENDEAX:	.word 0
+SYS_ENDEBX:	.word 0
+SYS_ENDECX:	.word 0
+
 intnum:		.byte 0
 sherestr:	.ascii "!!!here\n"

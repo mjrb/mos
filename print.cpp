@@ -76,3 +76,14 @@ extern "C" void printh(uint32_t p) {
   printf(buf);
 }
 
+// compares to strings until n
+extern "C" bool strn_eq(char* str1, char* str2, uint32_t n) {
+    for (int i = 0; i < n; i++) {
+      if (str1[i] != str2[i]) {
+	return false;
+      } else if (str1[i] == '\0') {
+	return true;
+      }
+    }
+    return true;
+}

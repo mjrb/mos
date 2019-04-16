@@ -5,22 +5,9 @@
 #include "interrupts.h"
 #include "keyboard.h"
 #include "syscall.h"
+#include "jfs.h"
 
-// compares to strings until n
-bool strn_eq(char* str1, char* str2, uint32_t n) {
-    bool eq = true;
-    for (int i = 0; i < n; i++) {
-      if (str1[i] != str2[i]) {
-	eq = false;
-	break;
-      }
-    }
-    return eq;
-}
-
-
-extern "C" void program();
-extern "C" void dprogram();
+extern "C" JumpFS* testfs;
 
 extern "C" void kmain(void* multiboot_s, uint32_t magic) {
   GlobalDescriptorTable gdt;
@@ -47,19 +34,37 @@ extern "C" void kmain(void* multiboot_s, uint32_t magic) {
     printf("here\n");
   }
 
-  char buf[80];
+#define LINE_LEN (4 + JFS_NAME_SZ + 1)
+  // com file\0
+  char line[LINE_LEN];
+  char* name = &line[4];
+  File* f = 0;
   while (true) {
-    printf("type some text: ");
-    get_line(buf, 80);
-    if (strn_eq(buf, "program\n", 9)) {
-      printf("running program\n");
-      program();
-    } else if (strn_eq(buf, "dprogram\n", 10)) {
-      printf("running program from data section\n");
-      dprogram();
+    printf("COMMAND $ ");
+    get_line(line, LINE_LEN);
+    line[3] = '\0';
+
+    if (strn_eq(line, "lis", 3)) {
+      File* list = testfs->list();
+      for (int i = 0; i < testfs->get_count(); i++) {
+	printf((char*)list[i].name);
+	printf("\n");
+      }
+      continue;
+    }
+    f = testfs->open(name);
+    if (f == 0) {
+      printf("no such file\n");
+    }
+    if (strn_eq(line, "cat", 3)) {
+      for (int i = 0; i < f->size; i++) {
+	putc((char)f->begin[i]);
+      }
+    } else if (strn_eq(line, "run", 3)) {
+      // most dangerous thing in the history of operating systems
+      f->exec();
     } else {
-      printf("recieved line: ");
-      printf(buf);
+      printf("No command chose cat, run or lis");
     }
   }
 

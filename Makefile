@@ -8,10 +8,12 @@ LDARGS=-melf_i386
 LD=ld
 
 HANDLERS=keyboard.o syscall.o
-PROGRAMS=program.o
+PROGRAMS= #program.o
+FILESYSTEMS=jfs.o testfs.o
 DRIVERS=port.o print.o interrupts.o interruptsstubs.o
 
-OBJECTS = gdt.o loader.o kernel.o $(DRIVERS) $(HANDLERS) $(PROGRAMS)
+CORE = gdt.o loader.o kernel.o
+OBJECTS = $(CORE) $(DRIVERS) $(HANDLERS) $(PROGRAMS) $(FILESYSTEMS)
 
 %.o: %.cpp
 	$(CXX) $(CXXARGS) -o $@ -c $<

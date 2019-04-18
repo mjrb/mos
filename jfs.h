@@ -11,7 +11,7 @@ struct File {
   uint8_t name[JFS_NAME_SZ + 1];
   uint32_t size;
   uint8_t* begin;
-  void exec();
+  void exec(uint8_t* args, uint32_t len);
 }__attribute((packed));
 
 class Cursor {

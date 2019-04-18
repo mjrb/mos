@@ -1,7 +1,7 @@
 #include "jfs.h"
 
-void File::exec() {
-  ((void(*)())begin)();
+void File::exec(uint8_t* args, uint32_t len) {
+  ((void(*)(uint8_t*, uint32_t))begin)(args, len);
 }
 
 Cursor::Cursor(File* f) : f(f), offset(0) {}

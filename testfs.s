@@ -19,12 +19,20 @@ testf:
 endtestf:
 	.byte 0
 progm:
+	push %ebp
+	movl %esp, %ebp
+	
 	push %eax
 	push %ebx
 	push %ecx
+
+	# print args
+	movl $0x1, %eax
+	movl 0x8(%ebp), %ebx
+	int $0xCD
 	
 	# dump input registers
-	movl $0x4, %eax
+	movl $0x10, %eax
 	movl $0x5, %ebx
 	movl $0x6, %ecx
 	int $0xCD
@@ -41,6 +49,8 @@ progm:
 	pop %ecx
 	pop %ebx
 	pop %eax
+
+	pop %ebp
 	
 	ret
 endprogm:

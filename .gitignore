@@ -2,3 +2,4 @@ mykernel.bin
 mykernel.iso
 *.o
 *~
+alloctest

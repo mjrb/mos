@@ -71,12 +71,22 @@ void* operator new[](unsigned size) {
 void* operator new(unsigned size, void* p) {return p;}
 void* operator new[](unsigned size, void* p) {return p;}
 
-void operator delete(void* p) {
+void kdelete(void* p) {
   if (MemManager::instance != 0)
     return MemManager::instance->free(p);
 }
+void operator delete(void* p) {
+  return kdelete(p);
+}
 
 void operator delete[](void* p) {
-  if (MemManager::instance != 0)
-    return MemManager::instance->free(p);
+  return kdelete(p);
+}
+
+void operator delete(void* p, unsigned size) {
+  return kdelete(p);
+}
+
+void operator delete[](void* p, unsigned size) {
+  return kdelete(p);
 }

@@ -1,9 +1,5 @@
 #include "jfs.h"
 
-void JFile::exec(uint8_t* args, uint32_t len) {
-  ((void(*)(uint8_t*, uint32_t))meta->begin)(args, len);
-}
-
 char* JFile::get_name() {return (char*)meta->name;}
 uint32_t JFile::get_size() {return meta->size;}
 uint32_t JFile::name_size() {return JFS_NAME_SZ + 1;}
@@ -26,13 +22,18 @@ uint8_t JFile::write(uint32_t offset, uint8_t* buf, uint32_t bytes) {
   return 0;
 }
 
-JumpFS::JumpFS(JFile* space, JumpFS* meta) {
+JumpFS::JumpFS(JumpFS* meta) {
   *this = *meta;
-  table = space;
+  table = new JFile[capacity];
   for (int i; i < capacity; i++) {
     table[i].meta = &metable[i];
   }
 }
+
+JumpFS::~JumpFS() {
+  delete table;
+}
+
 
 File* JumpFS::open(char* name) {
   for (int i = 0; i < count; i++) {

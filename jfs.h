@@ -19,7 +19,6 @@ struct JFATEntry {
 struct JFile : public File {
   JFATEntry* meta;
   JFile() {};
-  void exec(uint8_t* args, uint32_t len);
   char* get_name();
   uint32_t get_size();
   uint32_t name_size();
@@ -33,8 +32,8 @@ class JumpFS{// : public FileSystem
   JFATEntry* metable;
   JFile* table;
 public:
-  // TODO: ~JumpFS(); and use allocator
-  JumpFS(JFile* space, JumpFS* meta);
+  ~JumpFS();
+  JumpFS(JumpFS* meta);
   File* open(char* name);
   File* creat(uint8_t* name, uint32_t size);
   uint32_t get_count();

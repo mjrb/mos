@@ -7,6 +7,7 @@
 #include "syscall.h"
 #include "jfs.h"
 #include "multiboot.h"
+#include "allocator.h"
 
 
 extern "C" JumpFS* testfsmeta;
@@ -14,8 +15,11 @@ extern "C" JumpFS* testfsmeta;
 extern "C" void __cxa_pure_virtual() {asm("hlt");}
 
 extern "C" void kmain(struct multiboot_info* multiboot_s, uint32_t magic) {
-  JFile files[2];
-  JumpFS testfs((JFile*)files, testfsmeta);
+  if ((multiboot_s->flags & 0x1) == 0) {
+        asm("hlt"); // error can't get size of memory
+  }
+  MemManager mm((void*)0x1000000, multiboot_s->mem_upper);
+  JumpFS testfs(testfsmeta);
 
   GlobalDescriptorTable gdt;
   InterruptManager im(&gdt);

@@ -1,5 +1,12 @@
 #include "fsmanager.h"
 
+void File::exec(uint8_t* args, uint32_t len) {
+  auto space = new uint8_t[get_size()];
+  uint8_t nread = read(0, space, get_size());
+  ((void(*)(uint8_t*, uint32_t))space)(args, len);
+  delete space;
+}
+
 void FSManager::mount(char name, FileSystem* fs) {
   if (count < FS_MAX) {
     fss[count].fs = fs;

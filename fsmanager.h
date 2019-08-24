@@ -4,7 +4,7 @@
 #include "types.h"
 
 struct File {
-  virtual void exec(uint8_t* args, uint32_t len) = 0;
+  void exec(uint8_t* args, uint32_t len);
   virtual char* get_name() = 0;
   virtual uint32_t get_size() = 0;
   virtual uint32_t name_size() = 0;
@@ -13,6 +13,7 @@ struct File {
 protected:
   File() {};
 };
+
 
 class FileSystem {
 protected:

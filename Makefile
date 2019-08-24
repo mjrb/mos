@@ -1,4 +1,5 @@
 CXXARGS=-m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -g
+TESTCXXARGS=-m32 -fno-use-cxa-atexit  -fno-builtin -fno-rtti -fno-exceptions -g
 CXX=g++
 
 ASARGS=--32
@@ -9,16 +10,19 @@ LD=ld
 
 HANDLERS=keyboard.o syscall.o
 PROGRAMS= #program.o
-FILESYSTEMS=jfs.o testfs.o
+FILESYSTEMS=jfs.o testfs.o fsmanager.o
 DRIVERS=port.o print.o interrupts.o interruptsstubs.o
 
-CORE = gdt.o loader.o kernel.o
+CORE = gdt.o loader.o kernel.o allocator.o
 OBJECTS = $(CORE) $(DRIVERS) $(HANDLERS) $(PROGRAMS) $(FILESYSTEMS)
 
 %.o: %.cpp
 	$(CXX) $(CXXARGS) -o $@ -c $<
 %.o: %.s
 	$(AS) $(ASARGS) -o $@ $<
+
+alloctest: alloctest.cpp allocator.o
+	$(CXX) $(TESTCXXARGS) alloctest.cpp allocator.o -o alloctest
 
 mykernel.bin: linker.ld $(OBJECTS)
 	$(LD) $(LDARGS) -T $< -o $@ $(OBJECTS)

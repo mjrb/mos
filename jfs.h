@@ -6,34 +6,40 @@
 
 #include "print.h"
 #include "types.h"
+#include "fsmanager.h"
 
-struct File {
+struct JCursor;
+
+struct JFATEntry {
   uint8_t name[JFS_NAME_SZ + 1];
   uint32_t size;
   uint8_t* begin;
-  void exec(uint8_t* args, uint32_t len);
 }__attribute((packed));
 
-class Cursor {
-  File* f;
-  uint32_t offset;
-public:
-  Cursor(File* f);
-  void read(uint8_t* buf, uint32_t bytes);
-  void write(uint8_t* buf, uint32_t bytes);
-  void seek(uint32_t offset);
+struct JFile : public File {
+  JFATEntry* meta;
+  JFile() {};
+  void exec(uint8_t* args, uint32_t len);
+  char* get_name();
+  uint32_t get_size();
+  uint32_t name_size();
+  uint8_t read(uint32_t offset, uint8_t* buf, uint32_t bytes);
+  uint8_t write(uint32_t offset, uint8_t* buf, uint32_t bytes);
 };
 
-class JumpFS {
+class JumpFS{// : public FileSystem
   uint32_t capacity;
   uint32_t count;
-  File* table;
+  JFATEntry* metable;
+  JFile* table;
 public:
+  // TODO: ~JumpFS(); and use allocator
+  JumpFS(JFile* space, JumpFS* meta);
   File* open(char* name);
   File* creat(uint8_t* name, uint32_t size);
-  uint32_t get_count() {return count;};
-  uint32_t get_capacity() {return capacity;};
-  File* list() {return table;};
+  uint32_t get_count();
+  uint32_t get_capacity();
+  JFile* list();
 }__attribute((packed));
 
 #endif

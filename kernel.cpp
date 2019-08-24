@@ -6,33 +6,26 @@
 #include "keyboard.h"
 #include "syscall.h"
 #include "jfs.h"
+#include "multiboot.h"
 
-extern "C" JumpFS* testfs;
 
-extern "C" void kmain(void* multiboot_s, uint32_t magic) {
+extern "C" JumpFS* testfsmeta;
+
+extern "C" void __cxa_pure_virtual() {asm("hlt");}
+
+extern "C" void kmain(struct multiboot_info* multiboot_s, uint32_t magic) {
+  JFile files[2];
+  JumpFS testfs((JFile*)files, testfsmeta);
+
   GlobalDescriptorTable gdt;
   InterruptManager im(&gdt);
   // init hardware
   KeyboardDriver kd(&im);
-  SyscallHandler sh(&im);
+  SyscallHandler sh(&im, &testfs);
 
   im.activate();
   cls();
   printf("Welcome to my OS!\n");
-  printf("test");
-  printf(" part 2\n");
-  printh((uint32_t)gdt.code_offset());
-  printf("\n");
-
-  //trace bounds
-  setposc(0, WIDTH - 1, 'a');
-  setposc(HEIGHT - 1, 0, 'b');
-  setposc(HEIGHT - 1, WIDTH - 1, 'c');
-
-  //test scroll
-  for (int i = 0; i < 20; i++) {
-    printf("here\n");
-  }
 
 #define LINE_LEN (4 + JFS_NAME_SZ + 1)
   // com file\0
@@ -45,26 +38,32 @@ extern "C" void kmain(void* multiboot_s, uint32_t magic) {
     line[3] = '\0';
 
     if (strn_eq(line, "lis", 3)) {
-      File* list = testfs->list();
-      for (int i = 0; i < testfs->get_count(); i++) {
-	printf((char*)list[i].name);
+      JFile* list = testfs.list();
+      for (int i = 0; i < testfs.get_count(); i++) {
+	printf((char*)list[i].get_name());
 	printf("\n");
       }
       continue;
     }
-    f = testfs->open(name);
+    f = testfs.open(name);
     if (f == 0) {
       printf("no such file\n");
     }
     if (strn_eq(line, "cat", 3)) {
-      for (int i = 0; i < f->size; i++) {
-	putc((char)f->begin[i]);
+      uint8_t buf[11];
+      uint8_t read = 0;
+      for (int offset = 0; offset < f->get_size(); offset += 10) {
+	if ((read = f->read(offset, buf, 10)) < 0) {
+	  printf("error catting file\n");
+	}
+	buf[read] = '\0';
+	printf((char*)buf);
       }
     } else if (strn_eq(line, "run", 3)) {
       // most dangerous thing in the history of operating systems
-      f->exec();
+      f->exec((uint8_t*)"this was passed to program by arguments\n", 0);
     } else {
-      printf("No command chose cat, run or lis");
+      printf("No command chose cat, run or lis\n");
     }
   }
 

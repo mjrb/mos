@@ -5,7 +5,7 @@
 
 struct File {
   virtual void exec(uint8_t* args, uint32_t len) = 0;
-  virtual char* get_name();
+  virtual char* get_name() = 0;
   virtual uint32_t get_size() = 0;
   virtual uint32_t name_size() = 0;
   virtual uint8_t read(uint32_t offset, uint8_t* buf, uint32_t bytes) = 0;

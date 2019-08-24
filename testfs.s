@@ -1,12 +1,13 @@
 
 .section .data
-.global testfs
-testfs:
+.global testfsmeta
+testfsmeta:
 	.long fs
 fs:
 	.long 2
 	.long 2
 	.long table
+	.long 0
 table:
 	.ascii "testf\0"
 	.long endtestf-testf

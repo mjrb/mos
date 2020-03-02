@@ -26,10 +26,15 @@ progm:
 	push %eax
 	push %ebx
 	push %ecx
+	push %esi
+	push %edi
 
 	# print args
-	movl $0x1, %eax
-	movl 0x8(%ebp), %ebx
+	movl $0x2, %eax
+	movl $0x1, %ebx
+	movl $0x0, %ecx
+	movl 0x8(%ebp), %esi
+	movl 0xc(%ebp), %edx 	# print arg len
 	int $0xCD
 	
 	# dump input registers
@@ -39,14 +44,23 @@ progm:
 	int $0xCD
 
 	# getc
-	movl $0x3, %eax
+	movl $0x1, %eax
+	movl $0x0, %ebx
+	movl $0x0, %ecx
+	leal -0x4(%esp), %edi
+	movl $0x1, %edx
 	int $0xCD
 
-	#putc
-	movl %eax, %ebx
+	# putc
 	movl $0x2, %eax
+	movl $0x1, %ebx
+	movl $0x0, %ecx
+	leal -0x4(%esp), %esi
+	movl $0x1, %edx
 	int $0xCD
 
+	pop %edi
+	pop %esi
 	pop %ecx
 	pop %ebx
 	pop %eax

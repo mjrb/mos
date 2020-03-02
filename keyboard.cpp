@@ -138,3 +138,14 @@ extern "C" uint8_t get_line(char* buf, uint32_t length) {
     buf[i] = '\0';
   }
 }
+
+uint8_t KeyboardStdin::read(uint32_t offset, uint8_t* buf, uint32_t bytes) {
+  // TODO how to handle offset?
+  // TODO lmao security issue where you can use stdin to write to
+  // memory you don't own
+  while (bytes != 0) {
+    *buf = getc();
+    buf++;
+    bytes--;
+  }
+}

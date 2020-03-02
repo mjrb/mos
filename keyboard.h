@@ -29,4 +29,14 @@ extern "C" uint8_t getc();
 // garuntees buf ends with \0
 extern "C" uint8_t get_line(char* buf, uint32_t length);
 
+struct KeyboardStdin : public File {
+  void exec(uint8_t* args, uint32_t len) {};
+  char* get_name() {return "stdin";};
+  uint32_t get_size() {return 0;};
+  uint32_t name_size() {return 5;};
+  uint8_t read(uint32_t offset, uint8_t* buf, uint32_t bytes);
+  uint8_t write(uint32_t offset, uint8_t* buf, uint32_t bytes) {};
+  KeyboardStdin() {};
+};
+
 #endif

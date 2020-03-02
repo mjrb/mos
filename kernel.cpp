@@ -14,6 +14,14 @@ extern "C" JumpFS* testfsmeta;
 
 extern "C" void __cxa_pure_virtual() {asm("hlt");}
 
+uint8_t set_video_mode(uint8_t mode) {
+  uint8_t result = 0;
+  asm volatile("movl $0x0, %%eax\n"
+	       "movb %0, %%al\n"
+	       "int $0x10" : "=ra"(result) : "r"(mode));
+  return result;
+}
+
 extern "C" void kmain(struct multiboot_info* multiboot_s, uint32_t magic) {
   if ((multiboot_s->flags & 0x1) == 0) {
         asm("hlt"); // error can't get size of memory
@@ -28,8 +36,12 @@ extern "C" void kmain(struct multiboot_info* multiboot_s, uint32_t magic) {
   SyscallHandler sh(&im, &testfs);
 
   im.activate();
+  set_video_mode(0x3);// text 80x25
   cls();
-  printf("Welcome to my OS!\n");
+  printf("previous video mode ");
+  printh(multiboot_s->vbe_mode);
+  printf("\n");
+  printf("Welcome to MOS!\n");
 
 #define LINE_LEN (4 + JFS_NAME_SZ + 1)
   // com file\0
@@ -65,7 +77,7 @@ extern "C" void kmain(struct multiboot_info* multiboot_s, uint32_t magic) {
       }
     } else if (strn_eq(line, "run", 3)) {
       // most dangerous thing in the history of operating systems
-      f->exec((uint8_t*)"this was passed to program by arguments\n", 0);
+      f->exec((uint8_t*)"this was passed to program by arguments\n", 40);
     } else {
       printf("No command chose cat, run or lis\n");
     }

@@ -1,5 +1,5 @@
-CXXARGS=-m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -g
-TESTCXXARGS=-m32 -fno-use-cxa-atexit  -fno-builtin -fno-rtti -fno-exceptions -g
+CXXARGS=-m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-threadsafe-statics -fno-exceptions -fno-leading-underscore -g
+TESTCXXARGS=-m32 -fno-use-cxa-atexit -fno-threadsafe-statics -fno-builtin -fno-rtti -fno-exceptions -g
 CXX=g++
 
 ASARGS=--32
@@ -38,7 +38,7 @@ mykernel.iso: mykernel.bin grub.cfg
 	rm -rf iso
 
 run: mykernel.iso
-	qemu-system-i386 -cdrom mykernel.iso -m 2048 -boot d
+	qemu-system-i386 -cdrom mykernel.iso -m 2048 -boot d #-d int
 debug: mykernel.iso
 	gdb -x gdbscript
 

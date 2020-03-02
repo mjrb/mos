@@ -35,10 +35,16 @@ here:
 .extern SYS_EAX
 .extern SYS_EBX
 .extern SYS_ECX
+.extern SYS_EDX
+.extern SYS_ESI
+.extern SYS_EDI
 int_bottom:
 	movl %eax, (SYS_EAX)
 	movl %ebx, (SYS_EBX)
 	movl %ecx, (SYS_ECX)
+	movl %edx, (SYS_EDX)
+	movl %esi, (SYS_ESI)
+	movl %edi, (SYS_EDI)
 	pusha
 	pushl %ds
 	pushl %es
@@ -60,6 +66,10 @@ int_bottom:
 	movl (SYS_EAX), %eax
 	movl (SYS_EBX), %ebx
 	movl (SYS_ECX), %ecx
+	movl (SYS_EDX), %edx
+	movl (SYS_ESI), %esi
+	movl (SYS_EDI), %edi
+
 
 
 	#add $4, %esp

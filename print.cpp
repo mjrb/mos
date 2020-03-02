@@ -87,3 +87,14 @@ extern "C" bool strn_eq(char* str1, char* str2, uint32_t n) {
     }
     return true;
 }
+
+uint8_t ConsoleStdout::write(uint32_t offset, uint8_t* buf, uint32_t bytes) {
+  // TODO how to handle offset?
+  // TODO lmao security issue where you can use stdout to write to
+  // memory you don't own
+  while (bytes != 0) {
+    putc(*buf);
+    buf++;
+    bytes--;
+  }
+}
